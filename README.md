@@ -1,6 +1,6 @@
 # Servy
 
-**TODO: Add description**
+**TODO: Building Simple Web Server uisng Elixir**
 
 ## Installation
 
