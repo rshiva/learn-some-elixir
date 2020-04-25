@@ -1,0 +1,7 @@
+<h1>All the bears</h1>
+
+<ul>
+<li></li>
+</ul>/
+
+<%= inspect(bears)%>
