@@ -1,5 +1,6 @@
 defmodule Servy.HttpServer do
 
+  #spawn(Servy.HttpServer, :start,[4000])
 
   #Server cycle 1: Accept, 2:listen, 3: receive, 4:send, 5:close
   def start(port) when is_integer(port) and port > 1023 do
