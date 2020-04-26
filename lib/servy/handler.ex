@@ -4,6 +4,7 @@ defmodule Servy.Handler do
   alias Servy.Conv
   alias Servy.BearController
   alias Servy.VideoCam
+  alias Servy.Fetcher
   # alias Servy.Api.BearController, as: ApiBearController
 
   @pages_path Path.expand("../../pages", __DIR__) #like a constant , module attributes
@@ -35,20 +36,22 @@ defmodule Servy.Handler do
 
 
   def route(%Conv{method: "GET", path: "/snapshots"} = conv ) do
-    parent = self() #request-handling process
 
-    spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-1")}) end)
-    spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-2")}) end)
-    spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-3")}) end)
+    #Task is same as Fetcher but inbuild in Elixir 
+    pid1 = Fetcher.async(fn -> VideoCam.get_snapshot("cam-1") end )
+    pid2 = Fetcher.async(fn -> VideoCam.get_snapshot("cam-2") end )
+    pid3 = Fetcher.async(fn -> VideoCam.get_snapshot("cam-3") end )
+    task = Task.async(fn -> Servy.Tracker.get_location("bigfoot") end )
 
-    snapshot1 = receive do {:result, filename} -> filename end
-    snapshot2 = receive do {:result, filename} -> filename end
-    snapshot3 = receive do {:result, filename} -> filename end
+    where_is_bigfoot = Task.await(task)
+    snapshot1 = Fetcher.get_result(pid1)
+    snapshot2 = Fetcher.get_result(pid2)
+    snapshot3 = Fetcher.get_result(pid3)
 
     snapshot = [snapshot1,snapshot2,snapshot3]
 
 
-    %{conv | status: 200, resp_body: inspect snapshot}
+    %{conv | status: 200, resp_body: inspect {snapshot,where_is_bigfoot}}
   end
 
   def route(%Conv{method: "GET", path: "/wildthings"} = conv ) do
