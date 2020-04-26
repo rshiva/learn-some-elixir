@@ -24,7 +24,6 @@ defmodule Servy.BearController do
       |> Enum.sort(&Bear.order_asc_name/2)
 
       render_template(conv, "index.eex", bears: bears)
-
       # content = 
       #   @templates_path
       #   |> Path.join("index.eex")
@@ -33,7 +32,6 @@ defmodule Servy.BearController do
 
   def show(conv, %{"id" => id}) do
     bear = Wildthings.get_bear(id)
-
     render_template(conv, "show.eex", bear: bear)
 
     # %{conv | status: 200, resp_body: content}
